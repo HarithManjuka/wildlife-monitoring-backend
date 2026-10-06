@@ -1,0 +1,32 @@
+{
+  "name": "wildlife-monitoring-backend",
+  "version": "1.0.0",
+  "description": "RESTful API backend for the Smart Wildlife Conservation and Anti-Poaching Monitoring System. Built with Node.js, Express, and MongoDB, this service handles field data ingestion, automated alert generation, and analytical processing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarithManjuka/wildlife-monitoring-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/HarithManjuka/wildlife-monitoring-backend/issues"
+  },
+  "homepage": "https://github.com/HarithManjuka/wildlife-monitoring-backend#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "mongoose": "^9.11.0"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.1"
+  }
+}
