@@ -4,7 +4,10 @@
   "description": "RESTful API backend for the Smart Wildlife Conservation and Anti-Poaching Monitoring System. Built with Node.js, Express, and MongoDB, this service handles field data ingestion, automated alert generation, and analytical processing.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest --detectOpenHandles --forceExit",
+    "lint": "oxlint"
   },
   "repository": {
     "type": "git",
@@ -27,6 +30,7 @@
   "devDependencies": {
     "jest": "^30.5.2",
     "nodemon": "^3.1.14",
+    "oxlint": "^1.87.0",
     "supertest": "^7.3.1"
   }
 }
