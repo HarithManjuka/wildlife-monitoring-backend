@@ -29,5 +29,31 @@ This backend drives four core operational modules:
 
 1. **Clone the repository and checkout dev:**
    ```bash
-   git clone 
+   git clone https://github.com/HarithManjuka/wildlife-monitoring-backend.git
+   cd wildlife-monitoring-backend
    git checkout dev
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment:**
+   ```bash
+   cp .env.example .env
+   # Update MongoDB URI and environment parameters in .env
+   ```
+
+4. **Run development server:**
+   ```bash
+   npm run dev
+   # Backend API listens on http://localhost:7050
+   # Health check at http://localhost:7050/api/health
+   ```
+
+5. **Run test suite & linter:**
+   ```bash
+   npm test
+   npm run lint
+   ```
