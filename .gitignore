@@ -1,6 +1,5 @@
-# ==============================================================================
-# Wildlife Monitoring Backend - Professional .gitignore
-# ==============================================================================
+# Wildlife Monitoring Backend - .gitignore
+
 
 # Dependency Directories
 node_modules/
