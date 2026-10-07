@@ -1,87 +1,130 @@
 // backend/controllers/conflictController.js
+const conflictService = require('../services/conflictService');
 
-// Mock in-memory conflict reports queue
-const mockReports = [
-  {
-    id: 'conf-501',
-    source: 'SMS Gateway',
-    village: 'Habarana North',
-    threatLevel: 'Medium',
-    dispatchedRanger: null,
-    status: 'Triaged',
-    description: 'Wild elephant herd sighted near cultivation fence',
-    contact: '+94771234567',
-    reportedAt: new Date(Date.now() - 3600000).toISOString(),
-  },
-  {
-    id: 'conf-502',
-    source: 'Community Hotline',
-    village: 'Minneriya East',
-    threatLevel: 'High',
-    dispatchedRanger: 'Unit Alpha',
-    status: 'Ranger Assigned',
-    description: 'Lone bull elephant encroaching home garden',
-    contact: '+94779876543',
-    reportedAt: new Date(Date.now() - 1800000).toISOString(),
-  },
-];
+/**
+ * Controller: Community Conflict Triage (UC-03)
+ * Adheres to Single Responsibility Principle (SOLID).
+ * Delegates business logic, duplicate analysis, threat scoring, and storage to conflictService.
+ */
 
-// Webhook for SMS gateway (public/unauthenticated)
-exports.receiveSmsReport = (req, res) => {
-  const { sender, message, village, reporterName, contact, description } = req.body;
+// 1. Webhook for SMS gateway (public/unauthenticated)
+exports.receiveSmsReport = async (req, res) => {
+  try {
+    const report = await conflictService.receiveSmsReport(req.body);
 
-  const newReport = {
-    id: `conf-${Date.now()}`,
-    source: 'SMS Gateway',
-    sender: sender || contact || reporterName || 'Anonymous',
-    village: village || 'Unspecified Sector',
-    description: message || description || 'SMS report received',
-    threatLevel: 'Pending Triage',
-    dispatchedRanger: null,
-    status: 'Pending Dispatch',
-    reportedAt: new Date().toISOString(),
-  };
-
-  mockReports.unshift(newReport);
-
-  res.status(201).json({
-    success: true,
-    message: 'SMS conflict report received and queued for triage',
-    report: newReport,
-  });
-};
-
-// Retrieve triage queue (Protected: LIAISON_OFFICER, PARK_MANAGER)
-exports.getAllReports = (req, res) => {
-  res.status(200).json({
-    success: true,
-    total: mockReports.length,
-    reports: mockReports,
-  });
-};
-
-// Assign ranger to report (Protected: LIAISON_OFFICER)
-exports.assignRanger = (req, res) => {
-  const { reportId } = req.params;
-  const { rangerId, rangerName } = req.body;
-
-  const report = mockReports.find((r) => r.id === reportId);
-
-  if (!report) {
-    return res.status(404).json({
+    return res.status(201).json({
+      success: true,
+      message: 'SMS conflict report received and queued for triage',
+      report,
+    });
+  } catch (err) {
+    console.error('[UC03-ERROR] receiveSmsReport controller failure:', err.message);
+    return res.status(400).json({
       success: false,
-      error: `Conflict report with ID ${reportId} not found`,
+      error: err.message || 'Failed to ingest SMS conflict report',
     });
   }
+};
 
-  report.dispatchedRanger = rangerName || rangerId || 'Dispatched Ranger';
-  report.status = 'Ranger Assigned';
-  report.assignedBy = req.user ? req.user.name : 'Liaison Officer';
-  report.assignedAt = new Date().toISOString();
+// 2. Retrieve triage queue (Protected: LIAISON_OFFICER, PARK_MANAGER)
+exports.getAllReports = async (req, res) => {
+  try {
+    const reports = await conflictService.getAllReports(req.query);
 
-  res.status(200).json({
-    success: true,
-    message: `Ranger assigned successfully to conflict report ${reportId}`,
-    report,
-  });
+    return res.status(200).json({
+      success: true,
+      total: reports.length,
+      reports,
+    });
+  } catch (err) {
+    console.error('[UC03-ERROR] getAllReports controller failure:', err.message);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve conflict reports queue',
+    });
+  }
+};
+
+// 3. Retrieve single conflict incident details
+exports.getReportById = async (req, res) => {
+  try {
+    const reportId = req.params.reportId || req.params.id;
+    const report = await conflictService.getReportById(reportId);
+
+    if (!report) {
+      console.error(`[UC03-ERROR] Report not found: ${reportId}`);
+      return res.status(404).json({
+        success: false,
+        error: `Conflict report with ID ${reportId} not found`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      report,
+    });
+  } catch (err) {
+    console.error('[UC03-ERROR] getReportById controller failure:', err.message);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve incident details',
+    });
+  }
+};
+
+// 4. Assign ranger to report (Protected: LIAISON_OFFICER)
+exports.assignRanger = async (req, res) => {
+  const reportId = req.params.reportId || req.params.id;
+  const { rangerId, rangerName } = req.body;
+
+  try {
+    const assignedBy = req.user ? req.user.name : 'Liaison Officer';
+    const report = await conflictService.assignRanger(reportId, {
+      rangerId,
+      rangerName,
+      assignedBy,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Ranger assigned successfully to conflict report ${reportId}`,
+      report,
+    });
+  } catch (err) {
+    console.error(`[UC03-ERROR] assignRanger controller failure for ${reportId}:`, err.message);
+    const statusCode = err.statusCode || 400;
+    return res.status(statusCode).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
+// 5. Update threat classification or triage status
+exports.triageReport = async (req, res) => {
+  const reportId = req.params.reportId || req.params.id;
+  const { threatLevel, status, triageNotes } = req.body;
+
+  try {
+    const triagedBy = req.user ? req.user.name : 'Liaison Officer';
+    const report = await conflictService.triageReport(reportId, {
+      threatLevel,
+      status,
+      triageNotes,
+      triagedBy,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Conflict report ${reportId} triage updated successfully`,
+      report,
+    });
+  } catch (err) {
+    console.error(`[UC03-ERROR] triageReport controller failure for ${reportId}:`, err.message);
+    const statusCode = err.statusCode || 400;
+    return res.status(statusCode).json({
+      success: false,
+      error: err.message,
+    });
+  }
 };
