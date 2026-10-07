@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 // Route Handlers
+const authRoutes = require('./routes/authRoutes');
 const patrolRoutes = require('./routes/patrolRoutes');
 const alertRoutes = require('./routes/alertRoutes');
 const conflictRoutes = require('./routes/conflictRoutes');
@@ -48,7 +49,7 @@ app.get('/', (req, res) => {
     status: 'online',
     version: '1.0.0',
     documentation: '/api/health',
-    modules: ['/api/patrols', '/api/alerts', '/api/conflicts', '/api/analytics'],
+    modules: ['/api/auth', '/api/patrols', '/api/alerts', '/api/conflicts', '/api/analytics'],
   });
 });
 
@@ -69,6 +70,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Mount Module Endpoints
+app.use('/api/auth', authRoutes);
 app.use('/api/patrols', patrolRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/conflicts', conflictRoutes);
