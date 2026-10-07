@@ -9,11 +9,18 @@ router.get('/', (req, res) => {
   res.json({
     module: 'Community Conflict Triage',
     status: 'active',
-    endpoints: ['/queue', '/sms', '/:reportId/assign'],
+    endpoints: [
+      '/queue',
+      '/sms',
+      '/report',
+      '/:reportId',
+      '/:reportId/assign',
+      '/:reportId/triage',
+    ],
   });
 });
 
-// Webhook for SMS gateway doesn't need auth
+// Webhook for SMS gateway doesn't need auth (public ingestion channel)
 router.post('/sms', conflictController.receiveSmsReport);
 
 // Backward-compatibility alias for reporting
@@ -21,17 +28,34 @@ router.post('/report', conflictController.receiveSmsReport);
 
 // Only Liaison Officers and Park Managers can view and manage the triage queue
 router.get(
-  '/queue', 
-  requireAuth, 
-  requireRole(['LIAISON_OFFICER', 'PARK_MANAGER']), 
+  '/queue',
+  requireAuth,
+  requireRole(['LIAISON_OFFICER', 'PARK_MANAGER']),
   conflictController.getAllReports
 );
 
+// Retrieve single incident report details
+router.get(
+  '/:reportId',
+  requireAuth,
+  requireRole(['LIAISON_OFFICER', 'PARK_MANAGER']),
+  conflictController.getReportById
+);
+
+// Assign field ranger to report (Protected: LIAISON_OFFICER)
 router.put(
-  '/:reportId/assign', 
-  requireAuth, 
-  requireRole(['LIAISON_OFFICER']), 
+  '/:reportId/assign',
+  requireAuth,
+  requireRole(['LIAISON_OFFICER']),
   conflictController.assignRanger
+);
+
+// Update threat classification or triage notes (Protected: LIAISON_OFFICER, PARK_MANAGER)
+router.put(
+  '/:reportId/triage',
+  requireAuth,
+  requireRole(['LIAISON_OFFICER', 'PARK_MANAGER']),
+  conflictController.triageReport
 );
 
 module.exports = router;
