@@ -1,8 +1,35 @@
 const analyticsService = require('../services/analyticsService');
+const auditService = require('../services/auditService');
+
+/**
+ * GET /api/analytics/filters
+ * Retrieves filter options
+ */
+exports.getFilterOptions = (req, res) => {
+  try {
+    const filters = analyticsService.getFilterOptions();
+    return res.status(200).json({ success: true, filters });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+/**
+ * POST /api/analytics/validate
+ * Validates criteria parameters
+ */
+exports.validateFilters = (req, res) => {
+  try {
+    const result = analyticsService.validateFilters(req.body);
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({ valid: false, error: err.message });
+  }
+};
 
 /**
  * GET /api/analytics/summary
- * Returns high-level KPI cards for the Park Manager dashboard.
+ * Landing dashboard KPI statistics
  */
 exports.getDashboardSummary = async (req, res) => {
   try {
@@ -17,26 +44,40 @@ exports.getDashboardSummary = async (req, res) => {
 
 /**
  * POST /api/analytics/report
- * Generates a conservation analytics report using the appropriate strategy.
+ * Executes parallel query, statisticsDTO, hotspotData, chartData, and audit persistence.
  */
 exports.generateReport = async (req, res) => {
   try {
     const criteria = req.body;
-    if (!criteria.reportType) {
-      return res.status(400).json({ success: false, error: 'reportType is required' });
-    }
-    const report = await analyticsService.generateReport(criteria);
+    const user = req.user || { userId: 'USR-8824', name: 'J.R.I.C.S. Jayakody' };
+    const report = await analyticsService.generateReport(criteria, user);
     return res.status(200).json({ success: true, report });
   } catch (err) {
     console.error('[UC04-ERROR] generateReport:', err.message);
-    const status = err.message.includes('Unknown report type') ? 400 : 500;
+    const status = err.statusCode || 500;
     return res.status(status).json({ success: false, error: err.message });
   }
 };
 
 /**
+ * POST /api/analytics/export
+ * Handles PDF rendering / failure with CSV fallback
+ */
+exports.exportReport = async (req, res) => {
+  try {
+    const { payload, format, simulateError } = req.body;
+    const user = req.user || { userId: 'USR-8824', name: 'J.R.I.C.S. Jayakody' };
+    const result = await analyticsService.exportReport(payload, format, { simulateError }, user);
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error('[UC04-ERROR] exportReport:', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+/**
  * GET /api/analytics/queue
- * Returns the community conflict queue for Park Manager consumption.
+ * Community conflict triage queue consumed by Park Manager
  */
 exports.getCommunityQueue = async (req, res) => {
   try {
@@ -45,5 +86,18 @@ exports.getCommunityQueue = async (req, res) => {
   } catch (err) {
     console.error('[UC04-ERROR] getCommunityQueue:', err.message);
     return res.status(500).json({ success: false, error: 'Failed to retrieve community queue' });
+  }
+};
+
+/**
+ * GET /api/analytics/audit-logs
+ * Retrieves system audit trail history
+ */
+exports.getAuditLogs = async (req, res) => {
+  try {
+    const logs = await auditService.getAuditLogs(30);
+    return res.status(200).json({ success: true, total: logs.length, logs });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
   }
 };
