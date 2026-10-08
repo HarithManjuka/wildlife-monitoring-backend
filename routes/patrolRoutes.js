@@ -1,24 +1,31 @@
 const express = require('express');
 const router = express.Router();
+const patrolController = require('../controllers/patrolController');
+const incidentController = require('../controllers/incidentController');
 
-// Module 1: Field Patrols & Incidents (M.U. Handaragama)
-router.get('/', (req, res) => {
-  res.json({
-    module: 'Field Patrols & Incidents',
-    status: 'active',
-    items: [
-      { id: 'patrol-1', ranger: 'Unit Alpha', area: 'Sector 4 - River Basin', status: 'In Progress', loggedAt: new Date().toISOString() },
-    ],
-  });
-});
+/**
+ * Routes: Field Patrols & Incidents (UC-01)
+ * Author: M.U. Handaragama (IT23819092)
+ */
 
-router.post('/sync', (req, res) => {
-  const { logs = [] } = req.body;
-  res.status(200).json({
-    message: 'Offline patrol logs synchronized successfully',
-    syncedCount: logs.length,
-    timestamp: new Date().toISOString(),
-  });
-});
+// Overview & predefined routes
+router.get('/', patrolController.getOverview);
+router.get('/routes', patrolController.getRoutes);
+
+// Patrol CRUD & lifecycle
+router.get('/list', patrolController.getAllPatrols);
+router.post('/start', patrolController.startPatrol);
+router.get('/:id', patrolController.getPatrolById);
+router.post('/:id/waypoint', patrolController.addWaypoint);
+router.post('/:id/end', patrolController.endPatrol);
+
+// Batch offline synchronization endpoint
+router.post('/sync', patrolController.syncBatch);
+
+// Incidents sub-routes
+router.get('/incidents/all', incidentController.getAllIncidents);
+router.post('/incidents', incidentController.logIncident);
+router.put('/incidents/:id', incidentController.updateIncident);
+router.get('/incidents/:id', incidentController.getIncidentById);
 
 module.exports = router;
