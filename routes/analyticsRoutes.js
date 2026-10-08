@@ -1,29 +1,42 @@
 const express = require('express');
 const router = express.Router();
+const analyticsController = require('../controllers/analyticsController');
+const { requireAuth, requireRole } = require('../middlewares/authMiddleware');
 
-// Module 4: Conservation Analytics (J.R.I.C.S. Jayakody)
-router.get('/', (req, res) => {
-  res.json({
-    module: 'Conservation Analytics',
-    status: 'active',
-    summary: {
-      activePatrols: 6,
-      sensorAlertsToday: 14,
-      conflictReportsResolved: 29,
-      hotspotZone: 'Wilpattu Boundary - Sector 3',
-    },
-    generatedAt: new Date().toISOString(),
-  });
-});
+// Conservation Analytics
+// All endpoints are protected: only PARK_MANAGER can access analytics.
 
-router.get('/hotspots', (req, res) => {
-  res.json({
-    period: req.query.period || 'last_30_days',
-    hotspots: [
-      { id: 'hs-1', name: 'Zone Alpha', threatIndex: 0.82, incidentsCount: 15 },
-      { id: 'hs-2', name: 'Buffer Strip West', threatIndex: 0.64, incidentsCount: 9 },
-    ],
-  });
-});
+/**
+ * GET /api/analytics/summary
+ * KPI summary cards for the landing dashboard.
+ */
+router.get(
+  '/summary',
+  requireAuth,
+  requireRole(['PARK_MANAGER']),
+  analyticsController.getDashboardSummary
+);
+
+/**
+ * POST /api/analytics/report
+ * Generate a conservation analytics report.
+ */
+router.post(
+  '/report',
+  requireAuth,
+  requireRole(['PARK_MANAGER']),
+  analyticsController.generateReport
+);
+
+/**
+ * GET /api/analytics/queue
+ * Park Manager view of community conflict queue
+ */
+router.get(
+  '/queue',
+  requireAuth,
+  requireRole(['PARK_MANAGER']),
+  analyticsController.getCommunityQueue
+);
 
 module.exports = router;
