@@ -61,7 +61,7 @@ class AuditService {
   /**
    * Retrieves the recent audit log history for review.
    */
-  async getAuditLogs(limit = 20) {
+  async getAuditLogs(limit = 100) {
     try {
       if (this.isDbConnected()) {
         const docs = await AnalyticsAudit.find().sort({ timestamp: -1 }).limit(limit).lean();
