@@ -8,6 +8,7 @@ const patrolRoutes = require('./routes/patrolRoutes');
 const alertRoutes = require('./routes/alertRoutes');
 const conflictRoutes = require('./routes/conflictRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const incidentRoutes = require('./routes/incidentRoutes');
 
 const app = express();
 
@@ -75,6 +76,7 @@ app.use('/api/patrols', patrolRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/conflicts', conflictRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/incidents', incidentRoutes);
 
 // 404 Route Not Found Handler
 app.use((req, res) => {

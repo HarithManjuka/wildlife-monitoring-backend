@@ -1,0 +1,44 @@
+[
+  {
+    "id": "inc-019927",
+    "localId": "loc-inc-1791461019915",
+    "patrolId": "unassigned",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "incidentType": "ANIMAL_CARCASS",
+    "severity": "HIGH",
+    "coordinates": {
+      "latitude": 6.552561,
+      "longitude": 80.018522,
+      "accuracyMeters": 84
+    },
+    "landmark": "n",
+    "description": "bhbb",
+    "photos": [],
+    "status": "OPEN",
+    "syncStatus": "SYNCED",
+    "reportedAt": "2026-10-08T12:03:39.927Z"
+  },
+  {
+    "id": "inc-201",
+    "localId": "loc-inc-001",
+    "patrolId": "pat-101",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "incidentType": "SNARE",
+    "severity": "HIGH",
+    "coordinates": {
+      "latitude": 6.474,
+      "longitude": 80.902,
+      "accuracyMeters": 3.5
+    },
+    "landmark": "Eastern riverbed near old mahogany tree",
+    "description": "Single wire snare found on the eastern trail, near the old riverbed. Snare was dismantled.",
+    "photos": [
+      "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=600&q=80"
+    ],
+    "status": "RESOLVED",
+    "syncStatus": "SYNCED",
+    "reportedAt": "2026-10-08T11:15:32.392Z"
+  }
+]

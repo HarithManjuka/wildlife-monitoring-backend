@@ -1,0 +1,200 @@
+[
+  {
+    "id": "pat-922113",
+    "localId": "loc-pat-1791460922107",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-3c",
+    "routeName": "Patrol Route 3C - Southern Scrub Corridor",
+    "status": "COMPLETED",
+    "startTime": "2026-10-08T12:02:02.113Z",
+    "endTime": "2026-10-08T12:03:10.821Z",
+    "durationMinutes": 1,
+    "distanceKm": 0.01,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552538,
+        "longitude": 80.018472,
+        "timestamp": "2026-10-08T12:02:02.129Z",
+        "accuracyMeters": 81,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      },
+      {
+        "latitude": 6.552538,
+        "longitude": 80.018472,
+        "timestamp": "2026-10-08T12:02:10.706Z",
+        "accuracyMeters": 81,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552538,
+        "longitude": 80.018472,
+        "timestamp": "2026-10-08T12:02:12.858Z",
+        "accuracyMeters": 81,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552607,
+        "longitude": 80.018512,
+        "timestamp": "2026-10-08T12:02:17.621Z",
+        "accuracyMeters": 75,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552607,
+        "longitude": 80.018512,
+        "timestamp": "2026-10-08T12:02:19.668Z",
+        "accuracyMeters": 75,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552607,
+        "longitude": 80.018512,
+        "timestamp": "2026-10-08T12:02:22.074Z",
+        "accuracyMeters": 75,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552607,
+        "longitude": 80.018512,
+        "timestamp": "2026-10-08T12:02:25.555Z",
+        "accuracyMeters": 75,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      }
+    ],
+    "incidentsCount": 0,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-08T12:02:02.113Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-793139",
+    "localId": "loc-pat-1791460793103",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-3c",
+    "routeName": "Patrol Route 3C - Southern Scrub Corridor",
+    "status": "COMPLETED",
+    "startTime": "2026-10-08T11:59:53.139Z",
+    "endTime": "2026-10-08T12:01:39.283Z",
+    "durationMinutes": 2,
+    "distanceKm": 0,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.4715,
+        "longitude": 80.8985,
+        "timestamp": "2026-10-08T11:59:53.158Z",
+        "accuracyMeters": 5,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      },
+      {
+        "latitude": 6.4715,
+        "longitude": 80.8985,
+        "timestamp": "2026-10-08T11:59:56.579Z",
+        "accuracyMeters": 5,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.4715,
+        "longitude": 80.8985,
+        "timestamp": "2026-10-08T11:59:58.955Z",
+        "accuracyMeters": 5,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      }
+    ],
+    "incidentsCount": 0,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-08T11:59:53.139Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-101",
+    "localId": "loc-pat-001",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-1a",
+    "routeName": "Patrol Route 1A - Eastern River Basin",
+    "status": "IN_PROGRESS",
+    "startTime": "2026-10-08T10:25:32.391Z",
+    "endTime": null,
+    "durationMinutes": 90,
+    "distanceKm": 4.2,
+    "batteryLevel": 82,
+    "waypoints": [
+      {
+        "latitude": 6.4715,
+        "longitude": 80.8985,
+        "timestamp": "2026-10-08T10:25:32.392Z",
+        "accuracyMeters": 4.2,
+        "isManual": false,
+        "note": ""
+      },
+      {
+        "latitude": 6.4735,
+        "longitude": 80.9015,
+        "timestamp": "2026-10-08T10:55:32.392Z",
+        "accuracyMeters": 3.8,
+        "isManual": false,
+        "note": ""
+      },
+      {
+        "latitude": 6.476,
+        "longitude": 80.9045,
+        "timestamp": "2026-10-08T11:25:32.392Z",
+        "accuracyMeters": 4,
+        "isManual": true,
+        "note": "Damaged perimeter wire noticed"
+      }
+    ],
+    "incidentsCount": 1,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-08T11:55:32.392Z"
+  },
+  {
+    "id": "pat-100",
+    "localId": "loc-pat-000",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-2b",
+    "routeName": "Patrol Route 2B - Boundary Electric Fence",
+    "status": "COMPLETED",
+    "startTime": "2026-10-07T11:55:32.392Z",
+    "endTime": "2026-10-07T15:55:32.392Z",
+    "durationMinutes": 240,
+    "distanceKm": 11.8,
+    "batteryLevel": 45,
+    "waypoints": [
+      {
+        "latitude": 6.45,
+        "longitude": 80.88,
+        "timestamp": "2026-10-07T11:55:32.392Z",
+        "accuracyMeters": 4,
+        "isManual": false,
+        "note": ""
+      },
+      {
+        "latitude": 6.462,
+        "longitude": 80.895,
+        "timestamp": "2026-10-07T15:55:32.392Z",
+        "accuracyMeters": 3.5,
+        "isManual": false,
+        "note": ""
+      }
+    ],
+    "incidentsCount": 2,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-08T11:55:32.392Z"
+  }
+]
