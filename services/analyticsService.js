@@ -1,6 +1,7 @@
 const axios = require('axios');
 const conflictService = require('./conflictService');
 const auditService = require('./auditService');
+const { getExportFormatter } = require('./exporters');
 
 const PORT = process.env.PORT || 7050;
 const PEER_BASE_URL = `http://localhost:${PORT}/api`;
@@ -317,7 +318,7 @@ class IncidentAnalysisStrategy {
       hotspotData,
       chartData,
       patrolCoverage: statisticsDTO.patrolCoverage,
-      recentIncidents: incidentList.slice(0, 10).map((inc) => ({
+      recentIncidents: incidentList.map((inc) => ({
         id: inc.id,
         date: inc.loggedAt.toISOString().slice(0, 10),
         type: inc.type,
@@ -341,7 +342,7 @@ class PatrolCoverageStrategy {
       hotspotData,
       chartData,
       patrolCoverage: statisticsDTO.patrolCoverage,
-      recentIncidents: incidentList.slice(0, 10).map((inc) => ({
+      recentIncidents: incidentList.map((inc) => ({
         id: inc.id,
         date: inc.loggedAt.toISOString().slice(0, 10),
         type: inc.type,
@@ -374,7 +375,7 @@ class HumanWildlifeConflictStrategy {
       hotspotData,
       chartData,
       patrolCoverage: statisticsDTO.patrolCoverage,
-      recentIncidents: communityQueue.slice(0, 10).map((q) => ({
+      recentIncidents: communityQueue.map((q) => ({
         id: q.id,
         date: q.reportedAt.slice(0, 10),
         type: q.type,
@@ -443,15 +444,9 @@ class ReportingEngine {
     return { valid: true };
   }
 
-  /**
-   * Executes report generation pipeline
-   * Executes parallel queries [Fetch incidents] [Fetch patrols] [Fetch alerts]
-   * Computes statisticsDTO, hotspotData, chartData
-   * Handles alt [Insufficient data] vs [Sufficient data]
-   * Invokes :AuditService.logReportGeneration(...)
-   */
+  //Report generatrer
   async generateReport(criteria, user = {}) {
-    // 1. Validate
+    //  Validate
     const validation = this.validateFilters(criteria);
     if (!validation.valid) {
       const err = new Error(validation.error);
@@ -461,7 +456,7 @@ class ReportingEngine {
 
     const reportId = `REP-${Date.now().toString().slice(-6)}`;
 
-    // 2. Parallel Fetching
+    //  Parallel Fetching
     const [incidentList, patrolList, alertList] = await Promise.all([
       Incident.fetchIncidents(criteria),
       Patrol.fetchPatrols(criteria),
@@ -472,7 +467,7 @@ class ReportingEngine {
     const strategy = STRATEGY_REGISTRY[criteria.reportType];
     const generated = await strategy.execute(criteria, incidentList, patrolList, alertList);
 
-    // 4.  [Insufficient data] vs [Sufficient data] (Alternative Flow A1)
+    //  [Insufficient data] vs [Sufficient data] 
     const isInsufficient = incidentList.length === 0;
     const warning = isInsufficient
       ? 'Limited data: No incidents recorded for selected criteria. Suggest expanding date range or adjusting filters.'
@@ -492,7 +487,7 @@ class ReportingEngine {
       generatedAt: new Date().toISOString(),
     };
 
-    // 5. Audit Logging via :AuditService (logReportGeneration -> persistAuditRecord)
+    //  Audit Logging via :AuditService (logReportGeneration -> persistAuditRecord)
     const auditStatus = await auditService.logReportGeneration({
       userId: user.userId || 'USR-8824',
       userName: user.name || 'J.R.I.C.S. Jayakody (Park Manager)',
@@ -524,53 +519,10 @@ class ReportingEngine {
       };
     }
 
-    let fileContent = '';
-    let filename = `report_${payload?.reportId || 'analytics'}_${Date.now()}`;
-    let mimeType = 'text/plain';
-
-    if (fmt === 'CSV') {
-      mimeType = 'text/csv';
-      filename += '.csv';
-      const rows = [
-        ['Report ID', payload?.reportId || ''],
-        ['Report Type', payload?.reportType || ''],
-        ['Status', payload?.status || ''],
-        ['Total Incidents', payload?.totalIncidents ?? 0],
-        ['Coverage Score (%)', payload?.patrolCoverage?.coverageScore ?? 0],
-        ['Coverage Gap (%)', payload?.patrolCoverage?.coverageGap ?? 0],
-        [],
-        ['Zone Name', 'Patrol Count'],
-      ];
-      (payload?.patrolCoverage?.zones || []).forEach((z) => {
-        rows.push([z.name, z.patrols]);
-      });
-      rows.push([], ['Location', 'Incident Count', 'Severity', 'Density']);
-      (payload?.hotspots || []).forEach((h) => {
-        rows.push([h.location, h.count, h.severity, h.density]);
-      });
-      fileContent = rows.map((r) => r.join(',')).join('\n');
-    } else {
-      mimeType = 'application/pdf';
-      filename += '.pdf';
-      fileContent = [
-        '====================================================',
-        '      SMART WILDLIFE CONSERVATION SYSTEM',
-        '        CONSERVATION ANALYTICS REPORT',
-        '====================================================',
-        `Report ID     : ${payload?.reportId}`,
-        `Report Type   : ${payload?.reportType}`,
-        `Generated At  : ${new Date().toISOString()}`,
-        `Total Records : ${payload?.totalIncidents ?? 0}`,
-        `Coverage Score: ${payload?.patrolCoverage?.coverageScore ?? 0}%`,
-        '----------------------------------------------------',
-        'INCIDENTS BY TYPE:',
-        ...Object.entries(payload?.byType || {}).map(([t, c]) => `  ${t.padEnd(20)}: ${c}`),
-        '----------------------------------------------------',
-        'CRITICAL HOTSPOTS:',
-        ...(payload?.hotspots || []).map((h) => `  ${h.location.padEnd(25)} [${h.severity}]: ${h.count} incidents`),
-        '====================================================',
-      ].join('\n');
-    }
+    // Format document structure using dedicated exporter files
+    const formatter = getExportFormatter(fmt);
+    const { mimeType, extension, content: fileContent } = formatter(payload);
+    const filename = `report_${payload?.reportId || 'analytics'}_${Date.now()}${extension}`;
 
     // Audit log the export activity
     await auditService.logReportGeneration({

@@ -95,7 +95,8 @@ exports.getCommunityQueue = async (req, res) => {
  */
 exports.getAuditLogs = async (req, res) => {
   try {
-    const logs = await auditService.getAuditLogs(30);
+    const limit = Number(req.query.limit) || 100;
+    const logs = await auditService.getAuditLogs(limit);
     return res.status(200).json({ success: true, total: logs.length, logs });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
