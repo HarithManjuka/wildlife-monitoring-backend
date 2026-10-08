@@ -19,7 +19,7 @@ const analyticsAuditSchema = new mongoose.Schema(
     },
     userName: {
       type: String,
-      default: 'J.R.I.C.S. Jayakody (Park Manager)',
+      default: 'Park Manager',
     },
     reportType: {
       type: String,

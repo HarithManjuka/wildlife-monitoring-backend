@@ -21,7 +21,7 @@ class AuditService {
     const record = {
       reportId: reportId || `REP-${Date.now()}`,
       userId: userId || 'USR-8824',
-      userName: userName || 'J.R.I.C.S. Jayakody (Park Manager)',
+      userName: userName || 'Park Manager',
       reportType: reportType || 'INCIDENT_ANALYSIS',
       criteria: criteria || {},
       status: status || 'SUCCESS',

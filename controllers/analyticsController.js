@@ -49,7 +49,7 @@ exports.getDashboardSummary = async (req, res) => {
 exports.generateReport = async (req, res) => {
   try {
     const criteria = req.body;
-    const user = req.user || { userId: 'USR-8824', name: 'J.R.I.C.S. Jayakody' };
+    const user = req.user || { userId: 'USR-8824', name: 'Park Manager' };
     const report = await analyticsService.generateReport(criteria, user);
     return res.status(200).json({ success: true, report });
   } catch (err) {
@@ -66,7 +66,7 @@ exports.generateReport = async (req, res) => {
 exports.exportReport = async (req, res) => {
   try {
     const { payload, format, simulateError } = req.body;
-    const user = req.user || { userId: 'USR-8824', name: 'J.R.I.C.S. Jayakody' };
+    const user = req.user || { userId: 'USR-8824', name: 'Park Manager' };
     const result = await analyticsService.exportReport(payload, format, { simulateError }, user);
     return res.status(200).json(result);
   } catch (err) {

@@ -3,7 +3,8 @@
  * @param {Object} payload
  * @returns {{ mimeType: string, extension: string, content: string }}
  */
-function formatPdfReport(payload) {
+function formatPdfReport(payload = {}, user = null) {
+  const managerName = user?.name || payload?.userName || 'Park Manager';
   const content = [
     '====================================================',
     '      SMART WILDLIFE CONSERVATION SYSTEM',
@@ -21,7 +22,7 @@ function formatPdfReport(payload) {
     'CRITICAL HOTSPOTS:',
     ...(payload?.hotspots || []).map((h) => `  ${h.location.padEnd(25)} [${h.severity}]: ${h.count} incidents`),
     '====================================================',
-    'VERIFICATION: Verified by J.R.I.C.S. Jayakody (Park Manager)',
+    `VERIFICATION: Verified & Signed by ${managerName} (Park Manager)`,
     '====================================================',
   ].join('\n');
 

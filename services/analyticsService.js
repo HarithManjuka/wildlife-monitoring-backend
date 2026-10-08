@@ -476,6 +476,8 @@ class ReportingEngine {
     const reportPayload = {
       reportId,
       reportType: criteria.reportType,
+      criteria,
+      userName: user?.name || 'Park Manager',
       status: isInsufficient ? 'LIMITED_DATA' : 'SUFFICIENT_DATA',
       warning,
       totalIncidents: generated.statisticsDTO.totalIncidents,
@@ -490,7 +492,7 @@ class ReportingEngine {
     //  Audit Logging via :AuditService (logReportGeneration -> persistAuditRecord)
     const auditStatus = await auditService.logReportGeneration({
       userId: user.userId || 'USR-8824',
-      userName: user.name || 'J.R.I.C.S. Jayakody (Park Manager)',
+      userName: user.name || 'Park Manager',
       reportId,
       reportType: criteria.reportType,
       criteria,
@@ -521,13 +523,13 @@ class ReportingEngine {
 
     // Format document structure using dedicated exporter files
     const formatter = getExportFormatter(fmt);
-    const { mimeType, extension, content: fileContent } = formatter(payload);
+    const { mimeType, extension, content: fileContent } = formatter(payload, user);
     const filename = `report_${payload?.reportId || 'analytics'}_${Date.now()}${extension}`;
 
     // Audit log the export activity
     await auditService.logReportGeneration({
       userId: user.userId || 'USR-8824',
-      userName: user.name || 'J.R.I.C.S. Jayakody (Park Manager)',
+      userName: user.name || 'Park Manager',
       reportId: payload?.reportId || 'EXPORT',
       reportType: payload?.reportType || 'EXPORT',
       criteria: { format: fmt },
