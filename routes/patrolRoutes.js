@@ -8,9 +8,15 @@ const incidentController = require('../controllers/incidentController');
  * Author: M.U. Handaragama (IT23819092)
  */
 
-// Overview & predefined routes
+// Overview & routes management (Park Manager / Admin)
 router.get('/', patrolController.getOverview);
 router.get('/routes', patrolController.getRoutes);
+router.post('/routes', patrolController.createRoute);
+router.delete('/routes/:id', patrolController.deleteRoute);
+
+// Live GPS telemetry sharing with Liaison Officer
+router.post('/gps/live', patrolController.shareLiveGps);
+router.get('/gps/active', patrolController.getActiveRangersGps);
 
 // Patrol CRUD & lifecycle
 router.get('/list', patrolController.getAllPatrols);

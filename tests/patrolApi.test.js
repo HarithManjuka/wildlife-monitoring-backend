@@ -166,4 +166,66 @@ describe('UC-01 Patrol & Incident REST API Integration Tests', () => {
     const res404 = await request(app).get('/api/incidents/inc-unknown-404');
     expect(res404.statusCode).toBe(404);
   });
+
+  // UC-04 / UC-01 Integration: Park Manager Patrol Route Management
+  it('POST /api/patrols/routes and DELETE /api/patrols/routes/:id should manage custom routes', async () => {
+    const createRes = await request(app)
+      .post('/api/patrols/routes')
+      .send({
+        name: 'Patrol Route 5E - Eastern Ridge & Sanctuary Border',
+        sector: 'Sector 5',
+        targetDistanceKm: 11.5,
+        riskLevel: 'HIGH',
+        description: 'Critical corridor adjacent to tea estates',
+      });
+
+    expect(createRes.statusCode).toBe(201);
+    expect(createRes.body.success).toBe(true);
+    expect(createRes.body.route.id).toBeDefined();
+    expect(createRes.body.route.name).toBe('Patrol Route 5E - Eastern Ridge & Sanctuary Border');
+
+    const routeId = createRes.body.route.id;
+
+    // Verify it appears in getRoutes
+    const listRes = await request(app).get('/api/patrols/routes');
+    expect(listRes.body.routes.some((r) => r.id === routeId)).toBe(true);
+
+    // Delete custom route
+    const deleteRes = await request(app).delete(`/api/patrols/routes/${routeId}`);
+    expect(deleteRes.statusCode).toBe(200);
+    expect(deleteRes.body.success).toBe(true);
+  });
+
+  // UC-01 <-> UC-03 Integration: Share Live GPS with Liaison Officer
+  it('POST /api/patrols/gps/live and GET /api/patrols/gps/active should share telemetry with Liaison Officer', async () => {
+    const liveGpsPayload = {
+      rangerId: 'USR-8822',
+      rangerName: 'M.U. Handaragama',
+      latitude: 6.4715,
+      longitude: 80.8985,
+      accuracyMeters: 4.2,
+      batteryLevel: 88,
+      routeId: 'route-1a',
+      routeName: 'Patrol Route 1A - Eastern River Basin',
+      status: 'PATROLLING',
+    };
+
+    const postGpsRes = await request(app)
+      .post('/api/patrols/gps/live')
+      .send(liveGpsPayload);
+
+    expect(postGpsRes.statusCode).toBe(200);
+    expect(postGpsRes.body.success).toBe(true);
+    expect(postGpsRes.body.telemetry.rangerId).toBe('USR-8822');
+    expect(postGpsRes.body.telemetry.latitude).toBe(6.4715);
+
+    // Verify active rangers telemetry endpoint
+    const activeRes = await request(app).get('/api/patrols/gps/active');
+    expect(activeRes.statusCode).toBe(200);
+    expect(activeRes.body.success).toBe(true);
+    expect(activeRes.body.count).toBeGreaterThanOrEqual(1);
+    const ranger = activeRes.body.rangers.find((r) => r.rangerId === 'USR-8822');
+    expect(ranger).toBeDefined();
+    expect(ranger.rangerName).toBe('M.U. Handaragama');
+  });
 });

@@ -45,7 +45,7 @@ const INITIAL_MOCK_PATROLS = [
     rangerId: 'USR-8822',
     rangerName: 'M.U. Handaragama',
     routeId: 'route-1a',
-    routeName: 'Patrol Route 1A - Eastern River Basin',
+    routeName: 'Yala Block 1: Palatupana to Menik Ganga Basin',
     status: PATROL_STATUSES.IN_PROGRESS,
     startTime: new Date(Date.now() - 5400000).toISOString(),
     endTime: null,
@@ -109,6 +109,7 @@ const path = require('path');
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const PATROLS_FILE = path.join(DATA_DIR, 'patrols.json');
 const INCIDENTS_FILE = path.join(DATA_DIR, 'incidents.json');
+const ROUTES_FILE = path.join(DATA_DIR, 'routes.json');
 
 function ensureDataDir() {
   try {
@@ -147,25 +148,154 @@ class PatrolService {
   constructor() {
     this.memoryPatrols = loadFromDisk(PATROLS_FILE, JSON.parse(JSON.stringify(INITIAL_MOCK_PATROLS)));
     this.memoryIncidents = loadFromDisk(INCIDENTS_FILE, JSON.parse(JSON.stringify(INITIAL_MOCK_INCIDENTS)));
+    this.customRoutes = loadFromDisk(ROUTES_FILE, []);
+    this.activeRangersGps = new Map();
   }
 
   saveDisk() {
     saveToDisk(PATROLS_FILE, this.memoryPatrols);
     saveToDisk(INCIDENTS_FILE, this.memoryIncidents);
+    saveToDisk(ROUTES_FILE, this.customRoutes);
   }
 
   resetStore() {
     this.memoryPatrols = JSON.parse(JSON.stringify(INITIAL_MOCK_PATROLS));
     this.memoryIncidents = JSON.parse(JSON.stringify(INITIAL_MOCK_INCIDENTS));
+    this.customRoutes = [];
+    this.activeRangersGps = new Map();
   }
 
   isMongoConnected() {
     return mongoose.connection.readyState === 1;
   }
 
-  // Predefined routes
+  // Predefined and Park Manager added routes
   getAvailableRoutes() {
-    return PREDEFINED_ROUTES;
+    return [...PREDEFINED_ROUTES, ...this.customRoutes];
+  }
+
+  async createRoute({ name, sector, targetDistanceKm, description = '', riskLevel = 'MEDIUM', createdBy = 'Park Manager' }) {
+    if (!name || !name.trim()) {
+      const err = new Error('Route name is required');
+      err.statusCode = 400;
+      throw err;
+    }
+    const distance = parseFloat(targetDistanceKm);
+    if (isNaN(distance) || distance <= 0) {
+      const err = new Error('Target distance must be a positive number');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const routeId = `route-${Date.now().toString().slice(-6)}`;
+    const newRoute = {
+      id: routeId,
+      name: name.trim(),
+      sector: (sector && sector.trim()) || 'General Reserve Sector',
+      targetDistanceKm: Math.round(distance * 10) / 10,
+      description: description ? description.trim() : 'Operational patrol path created by Park Manager',
+      riskLevel: riskLevel || 'MEDIUM',
+      createdBy: createdBy || 'Park Manager',
+      createdAt: new Date().toISOString(),
+      isCustom: true,
+    };
+
+    this.customRoutes.unshift(newRoute);
+    this.saveDisk();
+    return newRoute;
+  }
+
+  async deleteRoute(routeId) {
+    const isPredefined = PREDEFINED_ROUTES.some((r) => r.id === routeId);
+    if (isPredefined) {
+      const err = new Error('Cannot delete system predefined route');
+      err.statusCode = 403;
+      throw err;
+    }
+
+    const index = this.customRoutes.findIndex((r) => r.id === routeId);
+    if (index === -1) {
+      const err = new Error(`Route with ID ${routeId} not found`);
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const deleted = this.customRoutes.splice(index, 1)[0];
+    this.saveDisk();
+    return deleted;
+  }
+
+  // ==========================================
+  // LIVE GPS SHARING WITH LIAISON OFFICER
+  // ==========================================
+
+  shareLiveGps({
+    rangerId,
+    rangerName,
+    latitude,
+    longitude,
+    accuracyMeters = 5.0,
+    batteryLevel = 100,
+    routeId = null,
+    routeName = null,
+    status = 'ON_PATROL',
+    note = '',
+  }) {
+    if (!rangerId || !rangerId.trim()) {
+      const err = new Error('Ranger ID is required to share GPS');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const lat = parseFloat(latitude);
+    const lon = parseFloat(longitude);
+    if (isNaN(lat) || isNaN(lon)) {
+      const err = new Error('Valid latitude and longitude coordinates are required');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const telemetry = {
+      rangerId: rangerId.trim(),
+      rangerName: rangerName || 'M.U. Handaragama',
+      latitude: lat,
+      longitude: lon,
+      accuracyMeters: parseFloat(accuracyMeters) || 5.0,
+      batteryLevel: Math.max(0, Math.min(100, parseInt(batteryLevel, 10) || 100)),
+      routeId: routeId || 'route-1a',
+      routeName: routeName || 'Patrol Route 1A - Eastern River Basin',
+      status: status || 'ON_PATROL',
+      note: note || '',
+      lastPing: new Date().toISOString(),
+      sharedWith: ['LIAISON_OFFICER', 'PARK_MANAGER'],
+    };
+
+    this.activeRangersGps.set(rangerId.trim(), telemetry);
+    return telemetry;
+  }
+
+  getActiveRangersGps() {
+    if (this.activeRangersGps.size === 0) {
+      const activePatrols = this.memoryPatrols.filter((p) => p.status === PATROL_STATUSES.IN_PROGRESS);
+      for (const p of activePatrols) {
+        const latestWp = p.waypoints && p.waypoints.length > 0 ? p.waypoints[p.waypoints.length - 1] : { latitude: 6.4715, longitude: 80.8985, accuracyMeters: 4.2 };
+        this.activeRangersGps.set(p.rangerId, {
+          rangerId: p.rangerId,
+          rangerName: p.rangerName,
+          latitude: latestWp.latitude,
+          longitude: latestWp.longitude,
+          accuracyMeters: latestWp.accuracyMeters || 4.2,
+          batteryLevel: p.batteryLevel || 85,
+          routeId: p.routeId,
+          routeName: p.routeName,
+          status: 'ON_PATROL',
+          note: `Active on ${p.routeName}`,
+          lastPing: latestWp.timestamp || p.startTime || new Date().toISOString(),
+          sharedWith: ['LIAISON_OFFICER', 'PARK_MANAGER'],
+        });
+      }
+    }
+    return Array.from(this.activeRangersGps.values());
   }
 
   // ==========================================
@@ -179,7 +309,8 @@ class PatrolService {
       throw err;
     }
 
-    const matchedRoute = PREDEFINED_ROUTES.find((r) => r.id === routeId) || {
+    const availableRoutes = this.getAvailableRoutes();
+    const matchedRoute = availableRoutes.find((r) => r.id === routeId) || {
       id: routeId || 'route-custom',
       name: routeName || 'Assigned Custom Patrol Route',
     };
@@ -202,6 +333,22 @@ class PatrolService {
       syncStatus: SYNC_STATUSES.SYNCED,
       lastSyncedAt: new Date().toISOString(),
     };
+
+    // Auto-register in live GPS broadcast for Liaison Officer
+    this.activeRangersGps.set(newPatrol.rangerId, {
+      rangerId: newPatrol.rangerId,
+      rangerName: newPatrol.rangerName,
+      latitude: 6.4715,
+      longitude: 80.8985,
+      accuracyMeters: 4.2,
+      batteryLevel: newPatrol.batteryLevel,
+      routeId: newPatrol.routeId,
+      routeName: newPatrol.routeName,
+      status: 'ON_PATROL',
+      note: `Patrol shift started on ${newPatrol.routeName}`,
+      lastPing: new Date().toISOString(),
+      sharedWith: ['LIAISON_OFFICER', 'PARK_MANAGER'],
+    });
 
     if (this.isMongoConnected()) {
       try {
@@ -279,6 +426,21 @@ class PatrolService {
 
     patrol.waypoints.push(waypoint);
     patrol.distanceKm = Math.round(((patrol.distanceKm || 0) + addedDistance) * 100) / 100;
+
+    // Automatically sync live GPS telemetry for Liaison Officer
+    this.shareLiveGps({
+      rangerId: patrol.rangerId,
+      rangerName: patrol.rangerName,
+      latitude: latNum,
+      longitude: lonNum,
+      accuracyMeters: waypoint.accuracyMeters,
+      batteryLevel: patrol.batteryLevel,
+      routeId: patrol.routeId,
+      routeName: patrol.routeName,
+      status: 'ON_PATROL',
+      note: waypoint.note || 'Active GPS waypoint recorded',
+    });
+
     this.saveDisk();
     return patrol;
   }
@@ -298,6 +460,7 @@ class PatrolService {
         doc.durationMinutes = durationMins;
         if (batteryLevel !== undefined) doc.batteryLevel = batteryLevel;
         await doc.save();
+        this.activeRangersGps.delete(doc.rangerId);
         return doc.toObject();
       }
     }
@@ -316,8 +479,12 @@ class PatrolService {
     patrol.status = PATROL_STATUSES.COMPLETED;
     patrol.endTime = endTime;
     patrol.durationMinutes = durationMins;
-    patrol.batteryLevel = batteryLevel;
-    patrol.summaryNotes = summaryNotes;
+    if (batteryLevel !== undefined) patrol.batteryLevel = batteryLevel;
+    if (summaryNotes) patrol.summaryNotes = summaryNotes.trim();
+
+    // Remove from active rangers GPS broadcast
+    this.activeRangersGps.delete(patrol.rangerId);
+
     this.saveDisk();
     return patrol;
   }

@@ -1,5 +1,381 @@
 [
   {
+    "id": "pat-154520",
+    "localId": "loc-pat-1791528154510",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-1a",
+    "routeName": "Yala Block 1: Palatupana to Menik Ganga Basin",
+    "status": "COMPLETED",
+    "startTime": "2026-10-09T06:42:34.520Z",
+    "endTime": "2026-10-09T06:42:56.693Z",
+    "durationMinutes": 1,
+    "distanceKm": 0,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552421,
+        "longitude": 80.01858,
+        "timestamp": "2026-10-09T06:42:34.542Z",
+        "accuracyMeters": 81,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      },
+      {
+        "latitude": 6.552421,
+        "longitude": 80.01858,
+        "timestamp": "2026-10-09T06:42:38.876Z",
+        "accuracyMeters": 81,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      }
+    ],
+    "incidentsCount": 0,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T06:42:34.520Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-012158",
+    "localId": "loc-pat-1791528012142",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-1a",
+    "routeName": "Yala Block 1: Palatupana to Menik Ganga Basin",
+    "status": "COMPLETED",
+    "startTime": "2026-10-09T06:40:12.158Z",
+    "endTime": "2026-10-09T06:41:52.006Z",
+    "durationMinutes": 2,
+    "distanceKm": 0.03,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552431,
+        "longitude": 80.018568,
+        "timestamp": "2026-10-09T06:40:12.202Z",
+        "accuracyMeters": 73,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      },
+      {
+        "latitude": 6.552431,
+        "longitude": 80.018568,
+        "timestamp": "2026-10-09T06:40:16.592Z",
+        "accuracyMeters": 73,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552431,
+        "longitude": 80.018568,
+        "timestamp": "2026-10-09T06:40:18.068Z",
+        "accuracyMeters": 73,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552431,
+        "longitude": 80.018568,
+        "timestamp": "2026-10-09T06:40:20.556Z",
+        "accuracyMeters": 73,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552524,
+        "longitude": 80.018604,
+        "timestamp": "2026-10-09T06:40:42.744Z",
+        "accuracyMeters": 80,
+        "isManual": true,
+        "note": "walak"
+      },
+      {
+        "latitude": 6.552524,
+        "longitude": 80.018604,
+        "timestamp": "2026-10-09T06:40:48.550Z",
+        "accuracyMeters": 80,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552524,
+        "longitude": 80.018604,
+        "timestamp": "2026-10-09T06:40:50.534Z",
+        "accuracyMeters": 80,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552524,
+        "longitude": 80.018604,
+        "timestamp": "2026-10-09T06:40:51.650Z",
+        "accuracyMeters": 80,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552386,
+        "longitude": 80.018534,
+        "timestamp": "2026-10-09T06:40:54.097Z",
+        "accuracyMeters": 68,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552386,
+        "longitude": 80.018534,
+        "timestamp": "2026-10-09T06:40:57.476Z",
+        "accuracyMeters": 68,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      }
+    ],
+    "incidentsCount": 1,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T06:40:12.158Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-437354",
+    "localId": "loc-pat-1791527437342",
+    "rangerId": "USR-8824",
+    "rangerName": "J.R.I.C.S. Jayakody",
+    "routeId": "route-1a",
+    "routeName": "Patrol Route 1A - Eastern River Basin",
+    "status": "COMPLETED",
+    "startTime": "2026-10-09T06:30:37.354Z",
+    "endTime": "2026-10-09T06:30:57.405Z",
+    "durationMinutes": 1,
+    "distanceKm": 0,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552552,
+        "longitude": 80.018545,
+        "timestamp": "2026-10-09T06:30:37.381Z",
+        "accuracyMeters": 80,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      }
+    ],
+    "incidentsCount": 1,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T06:30:37.354Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-387168",
+    "localId": "loc-pat-1791527387153",
+    "rangerId": "USR-8824",
+    "rangerName": "J.R.I.C.S. Jayakody",
+    "routeId": "route-1a",
+    "routeName": "Patrol Route 1A - Eastern River Basin",
+    "status": "COMPLETED",
+    "startTime": "2026-10-09T06:29:47.168Z",
+    "endTime": "2026-10-09T06:30:29.515Z",
+    "durationMinutes": 1,
+    "distanceKm": 0,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552698,
+        "longitude": 80.018499,
+        "timestamp": "2026-10-09T06:29:47.216Z",
+        "accuracyMeters": 83,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      }
+    ],
+    "incidentsCount": 1,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T06:29:47.168Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-006333",
+    "localId": "loc-pat-1791526006321",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-1a",
+    "routeName": "Patrol Route 1A - Eastern River Basin",
+    "status": "COMPLETED",
+    "startTime": "2026-10-09T06:06:46.333Z",
+    "endTime": "2026-10-09T06:11:07.178Z",
+    "durationMinutes": 4,
+    "distanceKm": 0,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552489,
+        "longitude": 80.01862,
+        "timestamp": "2026-10-09T06:06:46.360Z",
+        "accuracyMeters": 97,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      },
+      {
+        "latitude": 6.552489,
+        "longitude": 80.01862,
+        "timestamp": "2026-10-09T06:06:49.983Z",
+        "accuracyMeters": 97,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      }
+    ],
+    "incidentsCount": 3,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T06:06:46.333Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-818079",
+    "localId": "loc-pat-1791524818067",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-1a",
+    "routeName": "Patrol Route 1A - Eastern River Basin",
+    "status": "COMPLETED",
+    "startTime": "2026-10-09T05:46:58.079Z",
+    "endTime": "2026-10-09T06:02:40.358Z",
+    "durationMinutes": 16,
+    "distanceKm": 0,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552465,
+        "longitude": 80.018529,
+        "timestamp": "2026-10-09T05:46:58.103Z",
+        "accuracyMeters": 66,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      }
+    ],
+    "incidentsCount": 0,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T05:46:58.079Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-787473",
+    "localId": "loc-pat-1791472787466",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-1a",
+    "routeName": "Patrol Route 1A - Eastern River Basin",
+    "status": "COMPLETED",
+    "startTime": "2026-10-08T15:19:47.473Z",
+    "endTime": "2026-10-08T15:20:43.553Z",
+    "durationMinutes": 1,
+    "distanceKm": 0.03,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552367,
+        "longitude": 80.018512,
+        "timestamp": "2026-10-08T15:19:47.492Z",
+        "accuracyMeters": 69,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      },
+      {
+        "latitude": 6.552493,
+        "longitude": 80.018527,
+        "timestamp": "2026-10-08T15:20:31.600Z",
+        "accuracyMeters": 68,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552493,
+        "longitude": 80.018527,
+        "timestamp": "2026-10-08T15:20:33.704Z",
+        "accuracyMeters": 68,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.55261,
+        "longitude": 80.018426,
+        "timestamp": "2026-10-08T15:20:34.618Z",
+        "accuracyMeters": 95,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.55261,
+        "longitude": 80.018426,
+        "timestamp": "2026-10-08T15:20:36.592Z",
+        "accuracyMeters": 95,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      }
+    ],
+    "incidentsCount": 0,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-08T15:19:47.473Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
+    "id": "pat-185700",
+    "localId": "loc-pat-1791472185688",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-4d",
+    "routeName": "Patrol Route 4D - Mountain Ridge Lookout",
+    "status": "COMPLETED",
+    "startTime": "2026-10-08T15:09:45.700Z",
+    "endTime": "2026-10-08T15:19:42.221Z",
+    "durationMinutes": 10,
+    "distanceKm": 0.03,
+    "batteryLevel": 100,
+    "waypoints": [
+      {
+        "latitude": 6.552588,
+        "longitude": 80.018506,
+        "timestamp": "2026-10-08T15:09:45.721Z",
+        "accuracyMeters": 70,
+        "isManual": false,
+        "note": "Patrol shift initialized at start coordinates"
+      },
+      {
+        "latitude": 6.552588,
+        "longitude": 80.018506,
+        "timestamp": "2026-10-08T15:09:52.642Z",
+        "accuracyMeters": 70,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552588,
+        "longitude": 80.018506,
+        "timestamp": "2026-10-08T15:09:56.412Z",
+        "accuracyMeters": 70,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552595,
+        "longitude": 80.018511,
+        "timestamp": "2026-10-08T15:10:01.396Z",
+        "accuracyMeters": 70,
+        "isManual": false,
+        "note": "Live GPS trackpoint"
+      },
+      {
+        "latitude": 6.552367,
+        "longitude": 80.018512,
+        "timestamp": "2026-10-08T15:19:32.194Z",
+        "accuracyMeters": 69,
+        "isManual": true,
+        "note": "kaluthara"
+      }
+    ],
+    "incidentsCount": 0,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-08T15:09:45.700Z",
+    "summaryNotes": "Field patrol shift successfully completed."
+  },
+  {
     "id": "pat-922113",
     "localId": "loc-pat-1791460922107",
     "rangerId": "USR-8822",
