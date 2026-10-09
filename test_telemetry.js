@@ -6,7 +6,7 @@ const axios = require('axios');
 async function testTelemetry() {
   try {
     // Connect to database
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/wildlife_monitoring');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/wildlife_monitoring');
     console.log('Connected to DB');
 
     // 1. Seed a Collar

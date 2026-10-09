@@ -8,36 +8,59 @@ const validationService = require('./validationService');
 const sensorHealthService = require('./sensorHealthService');
 const geofenceEvaluationService = require('./geofenceEvaluationService');
 
+// Private internal helper methods mapped from sequence diagram
+const checkFreshness = (timestamp) => {
+  const telemetryTime = new Date(timestamp).getTime();
+  const currentTime = Date.now();
+  return (currentTime - telemetryTime) < (24 * 60 * 60 * 1000); // 24 hours
+};
+
+const checkDuplicate = (latestTimestamp, newTimestamp) => {
+  if (!latestTimestamp) return false;
+  return new Date(latestTimestamp).getTime() >= new Date(newTimestamp).getTime();
+};
+
 const processTelemetry = async (telemetryData) => {
   const { collarId, latitude, longitude, timestamp } = telemetryData;
 
-  // 1. Fetch Collar Data
-  const collarData = await AnimalCollar.findOne({ collarId });
-
-  // 2. Validate Telemetry
-  const validationResult = validationService.validateTelemetry(telemetryData, collarData);
+  // Step 3: validateTelemetry (Validation Service)
+  const validationResult = validationService.validateTelemetry(telemetryData);
 
   if (!validationResult.isValid) {
-    // Record validation failure (e.g., logging or saving invalid data flag)
-    console.warn(`[Telemetry] Validation failed for collar ${collarId}: ${validationResult.reason}`);
-    
-    if (validationResult.reason === 'Unknown or inactive collar') {
-      // In a real app, emit a showUnknownCollarWarning event here
-    } else if (validationResult.reason === 'Stale telemetry data') {
-      await sensorHealthService.updateHealth(collarId, 'Stale');
-      // emit showStaleWarning event
-    } else if (validationResult.reason === 'Duplicate telemetry data') {
-      // Record duplicate
-      console.warn(`[Telemetry] Duplicate recorded for ${collarId}`);
-    } else {
-      // Invalid coordinates
-      // emit showInvalidTelemetryWarning event
-    }
-
-    return { success: false, reason: validationResult.reason };
+    // Step 29: recordValidationFailure(telemetry)
+    console.warn(`[Telemetry] Invalid Telemetry: ${validationResult.reason}`);
+    return { success: false, error: 'Invalid telemetry' };
   }
 
-  // 3. Current and non-duplicate: Save Telemetry
+  // Step 5: findAnimalByCollarId (Animal Collar Repository)
+  const collarData = await AnimalCollar.findOne({ collarId });
+
+  if (!collarData || collarData.status !== 'Active') {
+    // Step 25: recordValidationFailure(collarId)
+    console.warn(`[Telemetry] Unknown or inactive collar: ${collarId}`);
+    return { success: false, error: 'Unknown or inactive collar' };
+  }
+
+  // Step 7: checkFreshness()
+  const isFresh = checkFreshness(timestamp);
+  
+  // Step 8: checkDuplicate()
+  const isDuplicate = checkDuplicate(collarData.latestLocation?.timestamp, timestamp);
+
+  if (isDuplicate) {
+    // Step 23: recordDuplicate(telemetry)
+    console.warn(`[Telemetry] Duplicate recorded for ${collarId}`);
+    return { success: false, error: 'Duplicate telemetry data' };
+  }
+
+  if (!isFresh) {
+    // Step 19: updateHealth(collarId, "Stale")
+    await sensorHealthService.updateHealth(collarId, 'Stale');
+    return { success: false, error: 'Stale telemetry data' };
+  }
+
+  // Current and non-duplicate path
+  // Step 9: saveTelemetry(telemetry)
   const newTelemetry = new Telemetry({
     collarId,
     latitude,
@@ -46,17 +69,14 @@ const processTelemetry = async (telemetryData) => {
   });
   await newTelemetry.save();
 
-  // 4. Update Latest Location on Animal Collar
+  // Step 11: updateLatestLocation
   collarData.latestLocation = { latitude, longitude, timestamp };
   await collarData.save();
 
-  // 5. Update Health to Online
+  // Step 13: updateHealth(collarId, "Online")
   await sensorHealthService.updateHealth(collarId, 'Online');
 
-  // 6. Publish telemetry (Simulated via a real-time event or just returned to controller)
-  // publishTelemetry(collarData.animalId, {latitude, longitude}, timestamp, 'Online');
-
-  // 7. Geofence Evaluation
+  // Step 17: provideValidLocation
   await geofenceEvaluationService.provideValidLocation(
     collarData.animalId,
     { latitude, longitude },
@@ -67,7 +87,6 @@ const processTelemetry = async (telemetryData) => {
 };
 
 const getRecentTelemetry = async () => {
-  // Fetch recent telemetry for the dashboard
   const telemetry = await Telemetry.find().sort({ timestamp: -1 }).limit(100);
   const collars = await AnimalCollar.find();
   return { telemetry, collars };
@@ -75,5 +94,7 @@ const getRecentTelemetry = async () => {
 
 module.exports = {
   processTelemetry,
-  getRecentTelemetry
+  getRecentTelemetry,
+  checkFreshness, // exported for testing
+  checkDuplicate  // exported for testing
 };
