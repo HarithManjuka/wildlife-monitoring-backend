@@ -125,3 +125,89 @@ exports.syncBatch = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.createRoute = async (req, res, next) => {
+  try {
+    const { name, sector, targetDistanceKm, description, riskLevel } = req.body;
+    const createdBy = req.user?.name || req.body.createdBy || 'Park Manager';
+    const newRoute = await patrolService.createRoute({
+      name,
+      sector,
+      targetDistanceKm,
+      description,
+      riskLevel,
+      createdBy,
+    });
+    res.status(201).json({
+      success: true,
+      message: 'Patrol route created successfully',
+      route: newRoute,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteRoute = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deleted = await patrolService.deleteRoute(id);
+    res.status(200).json({
+      success: true,
+      message: 'Patrol route removed successfully',
+      route: deleted,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.shareLiveGps = (req, res, next) => {
+  try {
+    const {
+      rangerId,
+      rangerName,
+      latitude,
+      longitude,
+      accuracyMeters,
+      batteryLevel,
+      routeId,
+      routeName,
+      status,
+      note,
+    } = req.body;
+
+    const effectiveRangerId = rangerId || req.user?.userId || 'USR-8822';
+    const effectiveRangerName = rangerName || req.user?.name || 'M.U. Handaragama';
+
+    const telemetry = patrolService.shareLiveGps({
+      rangerId: effectiveRangerId,
+      rangerName: effectiveRangerName,
+      latitude,
+      longitude,
+      accuracyMeters,
+      batteryLevel,
+      routeId,
+      routeName,
+      status,
+      note,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Live GPS telemetry shared with Liaison Officer & HQ',
+      telemetry,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getActiveRangersGps = (req, res) => {
+  const activeRangers = patrolService.getActiveRangersGps();
+  res.status(200).json({
+    success: true,
+    count: activeRangers.length,
+    rangers: activeRangers,
+  });
+};
