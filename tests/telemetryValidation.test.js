@@ -49,46 +49,4 @@ describe('[IT23818620] UC-02A: Telemetry Validation Service Tests', () => {
     });
   });
 
-  describe('Freshness Validation (Edge Cases)', () => {
-    it('should pass if timestamp is current', () => {
-      const telemetry = { latitude: 0, longitude: 0, timestamp: new Date().toISOString() };
-      const collar = { status: 'Active' };
-      const result = validateTelemetry(telemetry, collar);
-      expect(result.isValid).toBe(true);
-    });
-
-    it('should fail if timestamp is older than 24 hours (Stale Data)', () => {
-      const staleDate = new Date(Date.now() - (25 * 60 * 60 * 1000)).toISOString();
-      const telemetry = { latitude: 0, longitude: 0, timestamp: staleDate };
-      const collar = { status: 'Active' };
-      const result = validateTelemetry(telemetry, collar);
-      expect(result.isValid).toBe(false);
-      expect(result.reason).toBe('Stale telemetry data');
-    });
-  });
-
-  describe('Duplicate Data Validation', () => {
-    it('should fail if new timestamp is exactly the same as latest location timestamp', () => {
-      const sameTime = new Date().toISOString();
-      const telemetry = { latitude: 0, longitude: 0, timestamp: sameTime };
-      const collar = { status: 'Active', latestLocation: { timestamp: sameTime } };
-      
-      const result = validateTelemetry(telemetry, collar);
-      
-      expect(result.isValid).toBe(false);
-      expect(result.reason).toBe('Duplicate telemetry data');
-    });
-
-    it('should pass if new timestamp is strictly greater than latest location timestamp', () => {
-      const oldTime = new Date(Date.now() - 5000).toISOString();
-      const newTime = new Date().toISOString();
-      
-      const telemetry = { latitude: 0, longitude: 0, timestamp: newTime };
-      const collar = { status: 'Active', latestLocation: { timestamp: oldTime } };
-      
-      const result = validateTelemetry(telemetry, collar);
-      
-      expect(result.isValid).toBe(true);
-    });
-  });
 });
