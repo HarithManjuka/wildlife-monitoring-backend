@@ -39,6 +39,7 @@ async function startServer() {
     console.log(`📦 \x1b[1mProcess PID:\x1b[0m       \x1b[90m${process.pid} (Node ${process.version})\x1b[0m`);
     console.log('─'.repeat(72));
     console.log('📡 \x1b[1mActive Domain Modules:\x1b[0m');
+    console.log('   • \x1b[35m/api/auth\x1b[0m       - Authentication & Team Access');
     console.log('   • \x1b[32m/api/patrols\x1b[0m    - Field Patrols & Incident Sync (Handaragama)');
     console.log('   • \x1b[33m/api/alerts\x1b[0m     - Sensor & Geofence Breaches (Karunanayake)');
     console.log('   • \x1b[31m/api/conflicts\x1b[0m  - Community Conflict Triage (Abeykoon)');

@@ -1,0 +1,87 @@
+[
+  {
+    "id": "pat-sync-test",
+    "routeName": "Route 1 Updated",
+    "status": "COMPLETED",
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T16:58:16.579Z"
+  },
+  {
+    "id": "pat-101",
+    "localId": "loc-pat-001",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-1a",
+    "routeName": "Yala Block 1: Palatupana to Menik Ganga Basin",
+    "status": "IN_PROGRESS",
+    "startTime": "2026-10-09T15:28:16.089Z",
+    "endTime": null,
+    "durationMinutes": 90,
+    "distanceKm": 4.2,
+    "batteryLevel": 82,
+    "waypoints": [
+      {
+        "latitude": 6.4715,
+        "longitude": 80.8985,
+        "timestamp": "2026-10-09T15:28:16.090Z",
+        "accuracyMeters": 4.2,
+        "isManual": false,
+        "note": ""
+      },
+      {
+        "latitude": 6.4735,
+        "longitude": 80.9015,
+        "timestamp": "2026-10-09T15:58:16.090Z",
+        "accuracyMeters": 3.8,
+        "isManual": false,
+        "note": ""
+      },
+      {
+        "latitude": 6.476,
+        "longitude": 80.9045,
+        "timestamp": "2026-10-09T16:28:16.090Z",
+        "accuracyMeters": 4,
+        "isManual": true,
+        "note": "Damaged perimeter wire noticed"
+      }
+    ],
+    "incidentsCount": 1,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T16:58:16.090Z"
+  },
+  {
+    "id": "pat-100",
+    "localId": "loc-pat-000",
+    "rangerId": "USR-8822",
+    "rangerName": "M.U. Handaragama",
+    "routeId": "route-2b",
+    "routeName": "Patrol Route 2B - Boundary Electric Fence",
+    "status": "COMPLETED",
+    "startTime": "2026-10-08T16:58:16.090Z",
+    "endTime": "2026-10-08T20:58:16.090Z",
+    "durationMinutes": 240,
+    "distanceKm": 11.8,
+    "batteryLevel": 45,
+    "waypoints": [
+      {
+        "latitude": 6.45,
+        "longitude": 80.88,
+        "timestamp": "2026-10-08T16:58:16.090Z",
+        "accuracyMeters": 4,
+        "isManual": false,
+        "note": ""
+      },
+      {
+        "latitude": 6.462,
+        "longitude": 80.895,
+        "timestamp": "2026-10-08T20:58:16.090Z",
+        "accuracyMeters": 3.5,
+        "isManual": false,
+        "note": ""
+      }
+    ],
+    "incidentsCount": 2,
+    "syncStatus": "SYNCED",
+    "lastSyncedAt": "2026-10-09T16:58:16.090Z"
+  }
+]

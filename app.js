@@ -3,10 +3,13 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 // Route Handlers
+const authRoutes = require('./routes/authRoutes');
 const patrolRoutes = require('./routes/patrolRoutes');
 const alertRoutes = require('./routes/alertRoutes');
 const conflictRoutes = require('./routes/conflictRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const incidentRoutes = require('./routes/incidentRoutes');
+const telemetryRoutes = require('./routes/telemetryRoutes'); // [IT23818620 - K.M.S.G.S.C. Karunanayake] - UC-02A
 
 const app = express();
 
@@ -48,7 +51,7 @@ app.get('/', (req, res) => {
     status: 'online',
     version: '1.0.0',
     documentation: '/api/health',
-    modules: ['/api/patrols', '/api/alerts', '/api/conflicts', '/api/analytics'],
+    modules: ['/api/auth', '/api/patrols', '/api/alerts', '/api/conflicts', '/api/analytics'],
   });
 });
 
@@ -69,10 +72,13 @@ app.get('/api/health', (req, res) => {
 });
 
 // Mount Module Endpoints
+app.use('/api/auth', authRoutes);
 app.use('/api/patrols', patrolRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/conflicts', conflictRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/incidents', incidentRoutes);
+app.use('/api/telemetry', telemetryRoutes); // [IT23818620 - K.M.S.G.S.C. Karunanayake] - UC-02A
 
 // 404 Route Not Found Handler
 app.use((req, res) => {

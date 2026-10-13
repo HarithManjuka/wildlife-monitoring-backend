@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/HarithManjuka/wildlife-monitoring-backend#readme",
   "dependencies": {
+    "axios": "^1.20.0",
     "cors": "^2.8.6",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
