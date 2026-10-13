@@ -20,7 +20,7 @@ const ingestTelemetry = async (req, res) => {
     });
 
     if (!result.success) {
-      return res.status(422).json({ success: false, error: result.reason });
+      return res.status(422).json({ success: false, error: result.reason || result.error || 'Validation failed' });
     }
 
     return res.status(201).json({ success: true, data: result.data });

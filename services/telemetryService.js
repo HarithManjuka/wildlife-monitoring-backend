@@ -44,6 +44,12 @@ const processTelemetry = async (telemetryData) => {
   // checkFreshness()
   const isFresh = checkFreshness(timestamp);
 
+  if (!isFresh) {
+    // updateHealth(collarId, "Stale")
+    await sensorHealthService.updateHealth(collarId, 'Stale');
+    return { success: false, error: 'Stale telemetry data', reason: 'Stale telemetry data' };
+  }
+
   // checkDuplicate()
   const isDuplicate = checkDuplicate(collarData.latestLocation?.timestamp, timestamp);
 
@@ -51,12 +57,6 @@ const processTelemetry = async (telemetryData) => {
     // recordDuplicate(telemetry)
     console.warn(`[Telemetry] Duplicate recorded for ${collarId}`);
     return { success: false, error: 'Duplicate telemetry data', reason: 'Duplicate telemetry data' };
-  }
-
-  if (!isFresh) {
-    // updateHealth(collarId, "Stale")
-    await sensorHealthService.updateHealth(collarId, 'Stale');
-    return { success: false, error: 'Stale telemetry data', reason: 'Stale telemetry data' };
   }
 
   // Current and non-duplicate path
