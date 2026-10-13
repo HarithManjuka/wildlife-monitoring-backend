@@ -23,44 +23,44 @@ const checkDuplicate = (latestTimestamp, newTimestamp) => {
 const processTelemetry = async (telemetryData) => {
   const { collarId, latitude, longitude, timestamp } = telemetryData;
 
-  // Step 3: validateTelemetry (Validation Service)
+  // validateTelemetry (Validation Service)
   const validationResult = validationService.validateTelemetry(telemetryData);
 
   if (!validationResult.isValid) {
-    // Step 29: recordValidationFailure(telemetry)
+    // recordValidationFailure(telemetry)
     console.warn(`[Telemetry] Invalid Telemetry: ${validationResult.reason}`);
     return { success: false, error: 'Invalid telemetry' };
   }
 
-  // Step 5: findAnimalByCollarId (Animal Collar Repository)
+  // findAnimalByCollarId (Animal Collar Repository)
   const collarData = await AnimalCollar.findOne({ collarId });
 
   if (!collarData || collarData.status !== 'Active') {
-    // Step 25: recordValidationFailure(collarId)
+    // recordValidationFailure(collarId)
     console.warn(`[Telemetry] Unknown or inactive collar: ${collarId}`);
     return { success: false, error: 'Unknown or inactive collar' };
   }
 
-  // Step 7: checkFreshness()
+  // checkFreshness()
   const isFresh = checkFreshness(timestamp);
-  
-  // Step 8: checkDuplicate()
+
+  // checkDuplicate()
   const isDuplicate = checkDuplicate(collarData.latestLocation?.timestamp, timestamp);
 
   if (isDuplicate) {
-    // Step 23: recordDuplicate(telemetry)
+    // recordDuplicate(telemetry)
     console.warn(`[Telemetry] Duplicate recorded for ${collarId}`);
     return { success: false, error: 'Duplicate telemetry data' };
   }
 
   if (!isFresh) {
-    // Step 19: updateHealth(collarId, "Stale")
+    // updateHealth(collarId, "Stale")
     await sensorHealthService.updateHealth(collarId, 'Stale');
     return { success: false, error: 'Stale telemetry data' };
   }
 
   // Current and non-duplicate path
-  // Step 9: saveTelemetry(telemetry)
+  // saveTelemetry(telemetry)
   const newTelemetry = new Telemetry({
     collarId,
     latitude,
@@ -69,14 +69,14 @@ const processTelemetry = async (telemetryData) => {
   });
   await newTelemetry.save();
 
-  // Step 11: updateLatestLocation
+  // updateLatestLocation
   collarData.latestLocation = { latitude, longitude, timestamp };
   await collarData.save();
 
-  // Step 13: updateHealth(collarId, "Online")
+  // updateHealth(collarId, "Online")
   await sensorHealthService.updateHealth(collarId, 'Online');
 
-  // Step 17: provideValidLocation
+  // provideValidLocation
   await geofenceEvaluationService.provideValidLocation(
     collarData.animalId,
     { latitude, longitude },
