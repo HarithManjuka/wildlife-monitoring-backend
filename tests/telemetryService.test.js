@@ -88,4 +88,77 @@ describe('[IT23818620] UC-02A: Telemetry Service Tests', () => {
     expect(sensorHealthService.updateHealth).toHaveBeenCalledWith('COL-001', 'Stale');
     expect(Telemetry).not.toHaveBeenCalled();
   });
+
+  it('should reject invalid telemetry when coordinates are out of bounds', async () => {
+    // Arrange: Latitude > 90 is invalid
+    const invalidTelemetry = {
+      collarId: 'COL-001',
+      latitude: 999.0,
+      longitude: 80.0,
+      timestamp: new Date().toISOString()
+    };
+
+    // Act
+    const result = await telemetryService.processTelemetry(invalidTelemetry);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.reason).toBe('Invalid coordinates');
+    expect(AnimalCollar.findOne).not.toHaveBeenCalled();
+    expect(Telemetry).not.toHaveBeenCalled();
+  });
+
+  it('should reject duplicate telemetry when timestamp is equal or older than latest location', async () => {
+    // Arrange: latest location timestamp is newer or equal
+    const existingTimestamp = '2026-10-13T08:00:00.000Z';
+    const duplicateTelemetry = {
+      collarId: 'COL-001',
+      latitude: 7.0,
+      longitude: 80.0,
+      timestamp: existingTimestamp // duplicate timestamp
+    };
+
+    AnimalCollar.findOne.mockResolvedValue({
+      collarId: 'COL-001',
+      status: 'Active',
+      latestLocation: {
+        latitude: 7.0,
+        longitude: 80.0,
+        timestamp: existingTimestamp
+      },
+      save: jest.fn()
+    });
+
+    // Act
+    const result = await telemetryService.processTelemetry(duplicateTelemetry);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.reason).toBe('Duplicate telemetry data');
+    expect(Telemetry).not.toHaveBeenCalled();
+  });
+
+  it('should reject telemetry when collar is unknown or inactive', async () => {
+    // Arrange: collar status is Inactive
+    const telemetryData = {
+      collarId: 'COL-INACTIVE',
+      latitude: 7.0,
+      longitude: 80.0,
+      timestamp: new Date().toISOString()
+    };
+
+    AnimalCollar.findOne.mockResolvedValue({
+      collarId: 'COL-INACTIVE',
+      status: 'Inactive'
+    });
+
+    // Act
+    const result = await telemetryService.processTelemetry(telemetryData);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.reason).toBe('Unknown or inactive collar');
+    expect(Telemetry).not.toHaveBeenCalled();
+  });
 });
+

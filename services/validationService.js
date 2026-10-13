@@ -7,16 +7,27 @@ const validateCoordinates = (lat, lon) => {
   return lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
 };
 
-const validateTelemetry = (telemetryData) => {
+const validateCollarStatus = (collar) => {
+  return Boolean(collar && collar.status === 'Active');
+};
+
+const validateTelemetry = (telemetryData, collar) => {
   const { latitude, longitude } = telemetryData;
 
   if (!validateCoordinates(latitude, longitude)) {
     return { isValid: false, reason: 'Invalid coordinates' };
   }
 
+  if (collar !== undefined && !validateCollarStatus(collar)) {
+    return { isValid: false, reason: 'Unknown or inactive collar' };
+  }
+
   return { isValid: true };
 };
 
 module.exports = {
+  validateCoordinates,
+  validateCollarStatus,
   validateTelemetry,
 };
+
