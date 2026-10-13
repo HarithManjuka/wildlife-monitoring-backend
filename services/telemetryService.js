@@ -29,7 +29,7 @@ const processTelemetry = async (telemetryData) => {
   if (!validationResult.isValid) {
     // recordValidationFailure(telemetry)
     console.warn(`[Telemetry] Invalid Telemetry: ${validationResult.reason}`);
-    return { success: false, error: 'Invalid telemetry' };
+    return { success: false, error: 'Invalid telemetry', reason: validationResult.reason || 'Invalid telemetry' };
   }
 
   // findAnimalByCollarId (Animal Collar Repository)
@@ -38,7 +38,7 @@ const processTelemetry = async (telemetryData) => {
   if (!collarData || collarData.status !== 'Active') {
     // recordValidationFailure(collarId)
     console.warn(`[Telemetry] Unknown or inactive collar: ${collarId}`);
-    return { success: false, error: 'Unknown or inactive collar' };
+    return { success: false, error: 'Unknown or inactive collar', reason: 'Unknown or inactive collar' };
   }
 
   // checkFreshness()
@@ -50,13 +50,13 @@ const processTelemetry = async (telemetryData) => {
   if (isDuplicate) {
     // recordDuplicate(telemetry)
     console.warn(`[Telemetry] Duplicate recorded for ${collarId}`);
-    return { success: false, error: 'Duplicate telemetry data' };
+    return { success: false, error: 'Duplicate telemetry data', reason: 'Duplicate telemetry data' };
   }
 
   if (!isFresh) {
     // updateHealth(collarId, "Stale")
     await sensorHealthService.updateHealth(collarId, 'Stale');
-    return { success: false, error: 'Stale telemetry data' };
+    return { success: false, error: 'Stale telemetry data', reason: 'Stale telemetry data' };
   }
 
   // Current and non-duplicate path
